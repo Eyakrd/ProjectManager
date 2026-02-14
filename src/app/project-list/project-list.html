@@ -1,0 +1,9 @@
+<div>
+  @for(project of projects; track project.name) {
+    <h3 class="border-l-4 space-y-4">{{project.name}}</h3>
+    <p class="border-l-4 pl-2 mb-2">{{project .description}}</p>
+    <app-task-list [tasks]="project.tasks"></app-task-list>
+  } @empty {
+    <p>There are no items.</p>
+  }
+</div>

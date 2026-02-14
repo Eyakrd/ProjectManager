@@ -1,0 +1,119 @@
+/* From Uiverse.io by dylanharriscameron */
+.card {
+  position: relative;
+  width: 200px;
+  height: 250px;
+  border-radius: 14px;
+  z-index: 1111;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+  cursor: pointer;
+  transition: all 400ms ease;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 25px 25px 70px #bebebe, -25px -25px 70px #ffffff;
+}
+
+.bg {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 190px;
+  height: 240px;
+  z-index: 2;
+  background: rgba(255, 255, 255, .95);
+  backdrop-filter: blur(24px);
+  border-radius: 10px;
+  overflow: hidden;
+  outline: 2px solid white;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 300ms ease;
+}
+
+.card:hover .bg {
+  background: rgba(255, 255, 255, 1);
+}
+
+.blob {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  opacity: 1;
+  filter: blur(12px);
+  animation: blob-bounce 5s infinite ease;
+  transition: all 400ms ease;
+}
+
+.card:hover .blob {
+  width: 180px;
+  height: 180px;
+  filter: blur(16px);
+}
+
+/* Classes de couleur pour les blobs */
+.blob-yellow {
+  background-color: #fbbf24;
+}
+
+.blob-orange {
+  background-color: #fb923c;
+}
+
+.blob-green {
+  background-color: #34d399;
+}
+
+.blob-gray {
+  background-color: #9ca3af;
+}
+
+/* Animation du blob */
+@keyframes blob-bounce {
+  0% {
+    transform: translate(-100%, -100%) translate3d(0, 0, 0);
+  }
+
+  25% {
+    transform: translate(-100%, -100%) translate3d(100%, 0, 0);
+  }
+
+  50% {
+    transform: translate(-100%, -100%) translate3d(100%, 100%, 0);
+  }
+
+  75% {
+    transform: translate(-100%, -100%) translate3d(0, 100%, 0);
+  }
+
+  100% {
+    transform: translate(-100%, -100%) translate3d(0, 0, 0);
+  }
+}
+
+/* Effet de texte au hover */
+.card h3,
+.card p {
+  transition: all 300ms ease;
+}
+
+.card:hover h3 {
+  font-weight: 700;
+  transform: translateY(-2px);
+}
+
+.card:hover p {
+  opacity: 0.9;
+}

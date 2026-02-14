@@ -1,0 +1,86 @@
+<div>
+  @for (task of tasks; track task.title) {
+    <div class="card shadow rounded p-4 mb-4  " >
+      <div class="blob" [class]="getStatusColor(task.status)"></div>
+      <div class="bg">
+      <h3 class="border-l-4 space-y-4">{{task.title}}</h3>
+        <p class="border-l-4 pl-2 mb-2">{{task .description}}</p>
+
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <!-- Assignee -->
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+            <span class="text-sm text-gray-700">{{task.assignee}}</span>
+          </div>
+
+          <!-- Estimated Hours -->
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span class="text-sm text-gray-700">Est: {{task.estimatedHours}}h</span>
+          </div>
+          @if (task.actualHours) {
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-sm text-gray-700">Réel: {{task.actualHours}}h</span>
+            </div>
+          }
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span class="text-sm text-gray-700">{{task.startDate | date:'dd/MM/yyyy'}}</span>
+          </div>
+        </div>
+
+        <!-- Timeline Bar -->
+        <div class="mb-4">
+          <div class="flex justify-between text-xs text-gray-600 mb-1">
+            <span>Début: {{task.startDate | date:'dd/MM/yyyy'}}</span>
+            <span>Échéance: {{task.dueDate | date:'dd/MM/yyyy'}}</span>
+          </div>
+          @if (task.completedDate) {
+            <div class="text-xs text-green-600 mb-1">
+              ✓ Terminé le: {{task.completedDate | date:'dd/MM/yyyy'}}
+            </div>
+          }
+          <!-- Progress indicator (you can calculate based on dates or status) -->
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="h-2 rounded-full transition-all duration-300"
+                 [ngClass]="{
+                   'bg-green-500': task.status === 'Terminé',
+                   'bg-blue-500': task.status === 'En cours',
+                   'bg-gray-400': task.status === 'En attente'
+                 }"
+                 [style.width]="task.status === 'Terminé' ? '100%' : task.status === 'En cours' ? '50%' : '0%'">
+            </div>
+          </div>
+        </div>
+
+        <!-- Tags -->
+        @if (task.tags && task.tags.length > 0) {
+          <div class="flex flex-wrap gap-2">
+            @for (tag of task.tags; track tag) {
+              <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">
+                #{{tag}}
+              </span>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  } @empty {
+    <div class="text-center py-12">
+      <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+      </svg>
+      <p class="text-gray-500 text-lg">Aucune tâche disponible</p>
+    </div>
+  }
+
+</div>
