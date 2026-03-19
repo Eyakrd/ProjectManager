@@ -1,9 +1,113 @@
-<div>
-  @for(project of projects; track project.name) {
-    <h3 class="border-l-4 space-y-4">{{project.name}}</h3>
-    <p class="border-l-4 pl-2 mb-2">{{project .description}}</p>
-    <app-task-list [tasks]="project.tasks"></app-task-list>
-  } @empty {
-    <p>There are no items.</p>
-  }
+
+<div class="min-h-screen bg-gray-50 p-8">
+
+  <h1 class="text-3xl font-bold text-gray-800 mb-8"> Gestion des Projets</h1>
+  <input [(ngModel)]="searchTerm" placeholder="Rechercher un projet" class="w-full px-4 py-3 rounded-2xl m-4  border-gray-200 bg-white shadow-sm text-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ">
+  <p class="text-xs text-gray-400 mt-2 ml-1">
+    {{filteredProjects.length}} Projet(s) trouvé (s)
+  </p>
+
+  <div #detailSection>
+    @if (selectedProject) {
+
+      <app-project-detail [project]="selectedProject"></app-project-detail>
+    }</div>
+
+  <div class="grid grid-cols-1 gap-6">
+    @for(project of filteredProjects; track project.name) {
+
+      <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 hover:shadow-lg transition-shadow duration-300">
+
+        <!-- Header projet -->
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            <span class="text-xs font-mono text-gray-400">{{ project.id }}</span>
+            <h3 class="text-xl font-bold text-gray-800 mt-1">{{ project.name }}</h3>
+            <p class="text-gray-500 text-sm mt-1">{{ project.description }}</p>
+          </div>
+
+          <!-- Badge statut -->
+          <span class="ml-4 px-3 py-1 rounded-full text-xs font-semibold"
+                [ngClass]="{
+              'bg-blue-100 text-blue-700':   project.status === 'En cours',
+              'bg-green-100 text-green-700': project.status === 'Terminé',
+              'bg-yellow-100 text-yellow-700': project.status === 'En attente'
+            }">
+            {{ project.status }}
+          </span>
+        </div>
+
+        <!-- Infos rapides -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm">
+          <div>
+            <span class="text-gray-400 text-xs block">Priorité</span>
+            <span class="font-semibold text-gray-700">{{ project.priority }}</span>
+          </div>
+          <div>
+            <span class="text-gray-400 text-xs block">Responsable</span>
+            <span class="font-semibold text-gray-700">{{ project.owner }}</span>
+          </div>
+          <div>
+            <span class="text-gray-400 text-xs block">Budget</span>
+            <span class="font-semibold text-gray-700">{{ project.budget | currency:'EUR':'symbol':'1.0-0' }}</span>
+          </div>
+          <div>
+            <span class="text-gray-400 text-xs block">Tâches</span>
+            <span class="font-semibold text-gray-700">{{ project.tasks.length }} tâches</span>
+          </div>
+        </div>
+
+        <!-- Barre de progression -->
+        <div class="mb-4">
+          <div class="flex justify-between text-xs text-gray-500 mb-1">
+            <span>Progression</span>
+            <span>{{ project.progress }}%</span>
+          </div>
+          <div class="w-full bg-gray-100 rounded-full h-2">
+            <div class="h-2 rounded-full transition-all duration-500"
+                 [ngClass]="{
+                'bg-green-500': project.progress === 100,
+                'bg-blue-500':  project.progress > 0 && project.progress < 100,
+                'bg-gray-300':  project.progress === 0
+              }"
+                 [style.width]="project.progress + '%'">
+            </div>
+          </div>
+        </div>
+
+        <!-- Tags
+        <div class="flex flex-wrap gap-2 mb-4">
+          @for(tag of project.tags; track tag) {
+            <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded-md text-xs">#{{ tag }}</span>
+          }
+        </div>-->
+
+        <!-- Bouton Voir détails -->
+        <button
+          (click)="onVoirDetails(project,detailSection)"
+          class="w-full mt-2 py-2 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold rounded-xl transition-colors duration-200 cursor-pointer">
+           Voir détails
+        </button>
+
+        <!-- Task list -->
+        <div class="mt-4 border-t pt-4">
+          <p class="text-xs text-gray-400 uppercase font-semibold mb-3">Tâches</p>
+          <div class="flex flex-wrap gap-3">
+            <app-task-list [tasks]="project.tasks"></app-task-list>
+          </div>
+        </div>
+
+      </div>
+
+    } @empty {
+      <div class="text-center py-20 text-gray-400">
+        <p class="text-5xl mb-4">📭</p>
+        <p class="text-lg">Aucun projet trouvé</p>
+      </div>
+    }
+  </div>
+
+  <!-- Project Detail -->
+
+
 </div>

@@ -1,6 +1,9 @@
 import {Component} from '@angular/core';
 import {Task, TaskList} from '../task-list/task-list';
 import {CommonModule} from '@angular/common';
+import {ProjectDetail} from '../project-detail/project-detail';
+import {FormsModule} from '@angular/forms';
+
 export interface Project {
   id: string,
   name: string,
@@ -19,7 +22,7 @@ export interface Project {
 @Component({
   selector: 'app-project-list',
   imports: [
-    TaskList, CommonModule
+    TaskList, CommonModule, ProjectDetail,FormsModule
   ],
   templateUrl: './project-list.html',
   styleUrl: './project-list.css',
@@ -395,4 +398,24 @@ export class ProjectList {
       ]
     }
   ];
+  selectedProject:any = null;
+  searchTerm: string ='';
+  get filteredProjects() {
+    if(!this.searchTerm.trim())return  this.projects;
+    const term=this.searchTerm.toLowerCase();
+    return  this.projects.filter(project =>
+    project.name.toLowerCase().includes(term) ||
+        project.description.toLowerCase().includes(term) ||
+        project.owner.toLowerCase().includes(term) ||
+        project.tags.some(tag => tag.toLowerCase().includes(term))
+    );
+  }
+
+  onVoirDetails(project:Project, detailSection: HTMLElement) {
+    this.selectedProject = project;
+    setTimeout(() => {
+      detailSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 10);
+
+  }
 }
