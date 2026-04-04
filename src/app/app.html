@@ -1,3 +1,25 @@
-<div class="p-4">
+<div class="min-h-screen bg-gray-50 p-8">
+
+  <!-- Bouton toggle -->
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Gestion des Projets</h1>
+    <button
+      (click)="showForm = !showForm"
+      class="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-sm font-semibold rounded-xl transition-all duration-200 cursor-pointer">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 4v16m8-8H4"/>
+      </svg>
+      {{ showForm ? 'Annuler' : 'Ajouter un projet' }}
+    </button>
+  </div>
+
+  <!-- Formulaire toggle -->
+  @if (showForm) {
+    <app-add-project></app-add-project>
+  }
+
+  <!-- Liste des projets -->
   <app-project-list></app-project-list>
+
 </div>
