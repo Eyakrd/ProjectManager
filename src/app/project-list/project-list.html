@@ -7,11 +7,6 @@
     {{filteredProjects.length}} Projet(s) trouvé (s)
   </p>
 
-  <div #detailSection>
-    @if (selectedProject) {
-
-      <app-project-detail [project]="selectedProject"></app-project-detail>
-    }</div>
 
   <div class="grid grid-cols-1 gap-6">
     @for(project of filteredProjects; track project.name) {
@@ -83,11 +78,19 @@
         </div>-->
 
         <!-- Bouton Voir détails -->
-        <button
-          (click)="onVoirDetails(project,detailSection)"
-          class="w-full mt-2 py-2 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold rounded-xl transition-colors duration-200 cursor-pointer">
-           Voir détails
-        </button>
+       <!-- Bouton Voir détails -->
+<button
+  (click)="onVoirDetails(project)"
+  class="w-full mt-2 py-2 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold rounded-xl transition-colors duration-200 cursor-pointer">
+  {{ selectedProject?.id === project.id ? ' Masquer' : 'Voir détails' }}
+</button>
+
+<!-- Détail inline (accordion) -->
+@if (selectedProject?.id === project.id) {
+  <div class="mt-4">
+    <app-project-detail [project]="selectedProject"></app-project-detail>
+  </div>
+}
 
         <!-- Task list -->
         <div class="mt-4 border-t pt-4">

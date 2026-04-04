@@ -411,11 +411,12 @@ export class ProjectList {
     );
   }
 
-  onVoirDetails(project:Project, detailSection: HTMLElement) {
-    this.selectedProject = project;
-    setTimeout(() => {
-      detailSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 10);
+  onVoirDetails(project:Project) {
+
+
+    this.selectedProject = this.selectedProject?.id === project.id ? null : project;
+
+
 
   }
 }
