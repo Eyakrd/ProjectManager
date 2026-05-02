@@ -1,0 +1,171 @@
+/* ── Page & Layout ─────────────────────────────────────────── */
+.cf-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: #EFF6FF;
+}
+
+.cf-wrap {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  max-width: 860px;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, .10);
+}
+
+/* ── Sidebar ───────────────────────────────────────────────── */
+.cf-aside {
+  background: #1E3A5F;
+  color: #fff;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cf-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #93C5FD;
+  text-decoration: none;
+  margin-bottom: 2rem;
+}
+.cf-back:hover      { color: #fff; }
+.cf-back-arrow      { font-size: 14px; }
+
+.cf-aside-title     { font-size: 15px; font-weight: 600; margin: 0 0 .5rem; }
+.cf-aside-sub       { font-size: 12px; color: #93C5FD; line-height: 1.6; margin: 0 0 1.5rem; }
+
+.cf-steps           { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+.cf-step            { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #60A5FA; }
+.cf-step.active     { color: #fff; }
+
+.cf-step-dot        { width: 6px; height: 6px; border-radius: 50%; background: #1E40AF; flex-shrink: 0; }
+.cf-step.active .cf-step-dot { background: #60A5FA; }
+
+.cf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #93C5FD;
+  background: rgba(96, 165, 250, .15);
+  padding: 5px 10px;
+  border-radius: 20px;
+  width: fit-content;
+}
+.cf-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #60A5FA; }
+
+/* ── Main panel ────────────────────────────────────────────── */
+.cf-main    { background: #fff; padding: 2rem; }
+.cf-header  { margin-bottom: 1.5rem; }
+
+.cf-header-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #60A5FA;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin: 0 0 4px;
+}
+
+.cf-header-title { font-size: 20px; font-weight: 600; color: #1E3A5F; margin: 0; }
+
+/* ── Grid ──────────────────────────────────────────────────── */
+.cf-grid          { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.cf-field         { display: flex; flex-direction: column; }
+.cf-field.full    { grid-column: 1 / -1; }
+
+/* ── Labels ────────────────────────────────────────────────── */
+.cf-label    { font-size: 12px; font-weight: 500; color: #1E3A5F; margin-bottom: 5px; }
+.cf-required { color: #ef4444; margin-left: 2px; }
+.cf-optional { font-size: 10px; color: #93C5FD; font-weight: 400; margin-left: 4px; }
+
+/* ── Inputs ────────────────────────────────────────────────── */
+.cf-input {
+  padding: 8px 11px;
+  font-size: 13px;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+  width: 100%;
+  box-sizing: border-box;
+  color: #1E3A5F;
+  background: #F0F7FF;
+  font-family: inherit;
+}
+.cf-input:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, .15);
+}
+.cf-input.is-invalid {
+  border-color: #ef4444;
+}
+.cf-input.is-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, .12);
+}
+.cf-input.is-valid  { border-color: #22c55e; }
+
+.cf-textarea        { resize: vertical; min-height: 100px; }
+
+/* ── Input row (with spinner) ──────────────────────────────── */
+.cf-input-row               { position: relative; display: flex; align-items: center; }
+.cf-input-row .cf-input     { flex: 1; }
+.cf-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #DBEAFE;
+  border-top-color: #3B82F6;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Errors ────────────────────────────────────────────────── */
+.cf-errors  { margin-top: 4px; display: flex; flex-direction: column; gap: 2px; }
+.cf-error   { font-size: 11px; color: #ef4444; }
+
+/* ── Char counter ──────────────────────────────────────────── */
+.cf-field-footer  { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 4px; min-height: 16px; }
+.cf-char-count    { font-size: 11px; color: #93C5FD; margin-left: auto; }
+.cf-char-count.cf-char-ok { color: #22c55e; }
+
+/* ── Debug JSON ────────────────────────────────────────────── */
+.cf-debug     { margin: 1rem 0; font-size: 11px; color: #60A5FA; }
+.cf-debug pre { background: #F0F7FF; border: 1px solid #BFDBFE; border-radius: 6px; padding: .75rem; overflow-x: auto; }
+
+/* ── Divider & Actions ─────────────────────────────────────── */
+.cf-divider { height: 1px; background: #DBEAFE; margin: 1.25rem 0; }
+
+.cf-actions { display: flex; justify-content: space-between; align-items: center; }
+
+.cf-reset       { font-size: 13px; color: #60A5FA; background: none; border: none; cursor: pointer; padding: 0; }
+.cf-reset:hover { color: #1E3A5F; }
+
+.cf-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  background: #1E3A5F;
+  color: #fff;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.cf-submit:hover    { background: #1E40AF; }
+.cf-submit:disabled { opacity: .5; cursor: not-allowed; }
+.cf-submit-arrow    { font-size: 14px; }

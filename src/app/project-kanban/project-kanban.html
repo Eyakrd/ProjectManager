@@ -1,0 +1,93 @@
+<div class="kanban-wrap">
+
+  <div class="kanban-header">
+    <h2 class="board-title">Projets</h2>
+    <div class="header-stats">
+      <span class="stat stat-wait">
+        <span class="stat-dot"></span>{{ getCount('En attente') }} en attente
+      </span>
+      <span class="stat stat-prog">
+        <span class="stat-dot"></span>{{ getCount('En cours') }} en cours
+      </span>
+      <span class="stat stat-done">
+        <span class="stat-dot"></span>{{ getCount('Terminé') }} terminés
+      </span>
+    </div>
+  </div>
+
+  <div class="kanban-board">
+
+    @for (col of columns; track col.status) {
+      <div class="kanban-col"
+           [class]="'kanban-col col-' + col.key"
+           [class.drag-over]="dragOverCol === col.status"
+           (dragover)="onDragOver($event, col.status)"
+           (dragleave)="onDragLeave()"
+           (drop)="onDrop($event, col.status)">
+
+        <div class="col-head">
+          <span class="col-label">
+            <span class="col-dot" [class]="'dot-' + col.key"></span>
+            {{ col.status }}
+          </span>
+          <span class="col-count">{{ getCount(col.status) }}</span>
+        </div>
+
+        @for (project of getByStatus(col.status); track project.id) {
+          <div class="kanban-card"
+               draggable="true"
+               [class.dragging]="draggedId === project.id"
+               (dragstart)="onDragStart(project)"
+               (dragend)="onDragEnd()">
+
+            <div class="card-top">
+              <span class="card-id">{{ project.id }}</span>
+              <span class="priority-badge"
+                    [ngClass]="{
+                      'p-haute':   project.priority === 'Haute',
+                      'p-moyenne': project.priority === 'Moyenne',
+                      'p-basse':   project.priority === 'Basse'
+                    }">
+                {{ project.priority }}
+              </span>
+            </div>
+
+            <p class="card-name">{{ project.name }}</p>
+
+            <div class="card-owner">
+              <span class="avatar" [class]="'av-' + getAvatarColor(project.owner)">
+                {{ getInitials(project.owner) }}
+              </span>
+              <span class="owner-name">{{ project.owner || '—' }}</span>
+            </div>
+
+            <div class="bar-wrap">
+              <div class="bar"
+                   [ngClass]="{
+                     'bar-done': project.progress === 100,
+                     'bar-prog': project.progress > 0 && project.progress < 100
+                   }"
+                   [style.width]="project.progress + '%'">
+              </div>
+            </div>
+
+            <div class="card-foot">
+              <span class="tasks-label">
+                {{ project.tasks.length }} tâche{{ project.tasks.length !== 1 ? 's' : '' }}
+              </span>
+              <button class="btn-modifier" (click)="editProject.emit(project)">
+                Modifier
+              </button>
+            </div>
+
+          </div>
+        } @empty {
+          <div class="col-empty">Aucun projet</div>
+        }
+
+        <button class="col-add-btn">+ Nouveau projet</button>
+      </div>
+    }
+
+  </div>
+</div>

@@ -25,7 +25,7 @@ export interface Task {
   styleUrl: './task-list.css',
 })
 
-export class TaskList {
+export class TaskListComponent {
   @Input() tasks:Task[]=[];
 
   getStatusColor(status:string):string{
@@ -37,4 +37,3 @@ export class TaskList {
     return colors[status] || 'blob-gray';
   }
 }
-

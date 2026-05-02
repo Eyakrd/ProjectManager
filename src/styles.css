@@ -1,3 +1,37 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import "tailwindcss";
+/* ng-select dropdown — global car appendTo="body" sort du composant */
+.ng-dropdown-panel {
+  z-index: 9999 !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  background-color: #ffffff !important;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.ng-dropdown-panel .ng-option {
+  font-size: 14px;
+  padding: 10px 12px;
+  color: #1f2937;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.ng-dropdown-panel .ng-option:hover,
+.ng-dropdown-panel .ng-option.ng-option-marked {
+  background-color: #f3f4f6;
+}
+
+.ng-dropdown-panel .ng-option.ng-option-selected {
+  background-color: #eef2ff;
+  color: #4f46e5;
+  font-weight: 500;
+}
+
+.ng-dropdown-panel .ng-option.ng-option-selected.ng-option-marked {
+  background-color: #e0e7ff;
+}

@@ -110,5 +110,11 @@
       </div>
 
     </div>
+    <div class="mt-4 border-t pt-4">
+      <p class="text-xs text-gray-400 uppercase font-semibold mb-3">Tâches</p>
+      <div class="flex flex-wrap gap-3">
+        <app-task-list [tasks]="project.tasks"></app-task-list>
+      </div>
+    </div>
   </div>
 }

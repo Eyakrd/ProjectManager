@@ -1,0 +1,175 @@
+<div class="p-8">
+
+  <header class="mb-8 pr-8">
+    <h2 class="text-2xl font-bold text-gray-800">Ajouter un projet</h2>
+    <p class="text-gray-400 text-sm mt-1">Remplissez les informations du nouveau projet</p>
+  </header>
+
+  @if (successMessage) {
+    <div class="bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-xl mb-6 flex items-center gap-2">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl mb-6 flex items-center gap-2">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M8 5v3M8 11h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      {{ errorMessage }}
+    </div>
+  }
+
+  <form #projectForm="ngForm" (ngSubmit)="onSubmit(projectForm)" novalidate>
+    <div class="grid grid-cols-1 gap-5">
+
+      <!-- Name -->
+      <div>
+        <input
+          type="text"
+          name="name"
+          [(ngModel)]="project.name"
+          required
+          minlength="4"
+          #nameField="ngModel"
+          placeholder="Nom du projet"
+          class="input"
+          [class.border-red-400]="nameField.invalid && nameField.touched"/>
+        @if (nameField.invalid && nameField.touched) {
+          <p class="text-red-500 text-xs mt-1 ml-1">
+            @if (nameField.errors?.['required']) { Le nom est requis. }
+            @else if (nameField.errors?.['minlength']) { Minimum 4 caractères. }
+          </p>
+        }
+      </div>
+
+      <!-- Description -->
+      <div>
+        <textarea
+          name="description"
+          [(ngModel)]="project.description"
+          required
+          #descField="ngModel"
+          placeholder="Description"
+          rows="3"
+          class="input"
+          [class.border-red-400]="descField.invalid && descField.touched">
+        </textarea>
+        @if (descField.invalid && descField.touched) {
+          <p class="text-red-500 text-xs mt-1 ml-1">La description est requise.</p>
+        }
+      </div>
+
+      <!-- Status + Priority -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <select
+            name="status"
+            [(ngModel)]="project.status"
+            required
+            #statusField="ngModel"
+            class="input"
+            [class.border-red-400]="statusField.invalid && statusField.touched">
+            <option value="" disabled>Statut</option>
+            <option value="En cours">En cours</option>
+            <option value="En attente">En attente</option>
+            <option value="Terminé">Terminé</option>
+          </select>
+          @if (statusField.invalid && statusField.touched) {
+            <p class="text-red-500 text-xs mt-1 ml-1">Champ requis.</p>
+          }
+        </div>
+        <div>
+          <select
+            name="priority"
+            [(ngModel)]="project.priority"
+            required
+            #priorityField="ngModel"
+            class="input"
+            [class.border-red-400]="priorityField.invalid && priorityField.touched">
+            <option value="" disabled>Priorité</option>
+            <option value="Haute">Haute</option>
+            <option value="Moyenne">Moyenne</option>
+            <option value="Basse">Basse</option>
+          </select>
+          @if (priorityField.invalid && priorityField.touched) {
+            <p class="text-red-500 text-xs mt-1 ml-1">Champ requis.</p>
+          }
+        </div>
+      </div>
+
+      <!-- Responsable -->
+      <div>
+        <ng-select
+          [items]="owners"
+          [(ngModel)]="project.owner"
+          name="owner"
+          [searchable]="true"
+          [clearable]="true"
+          [addTag]="true"
+          addTagText="Ajouter : "
+          placeholder="Choisir ou ajouter un responsable"
+          appendTo="body">
+        </ng-select>
+      </div>
+
+      <!-- Dates -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs text-gray-400 mb-1 block ml-1">Date de début</label>
+          <input
+            type="date"
+            name="startDate"
+            [(ngModel)]="project.startDate"
+            required
+            #startField="ngModel"
+            class="input"
+            [class.border-red-400]="startField.invalid && startField.touched"/>
+          @if (startField.invalid && startField.touched) {
+            <p class="text-red-500 text-xs mt-1 ml-1">Date requise.</p>
+          }
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 mb-1 block ml-1">Date d'échéance</label>
+          <input
+            type="date"
+            name="dueDate"
+            [(ngModel)]="project.dueDate"
+            required
+            #dueField="ngModel"
+            class="input"
+            [class.border-red-400]="dueField.invalid && dueField.touched"/>
+          @if (dueField.invalid && dueField.touched) {
+            <p class="text-red-500 text-xs mt-1 ml-1">Date requise.</p>
+          }
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-8 flex justify-between items-center">
+      <button type="button" (click)="onCancel(projectForm)" class="btn-secondary">
+        Annuler
+      </button>
+      <button
+        type="submit"
+        [disabled]="projectForm.invalid || isSubmitting"
+        class="btn-primary">
+        @if (isSubmitting) {
+          <svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"
+                    stroke-dasharray="32" stroke-dashoffset="12"/>
+          </svg>
+        }
+        Enregistrer
+      </button>
+    </div>
+
+  </form>
+</div>

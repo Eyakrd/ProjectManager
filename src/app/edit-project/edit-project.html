@@ -1,0 +1,183 @@
+@if (editableProject) {
+  <div class="bg-white rounded-2xl shadow-md border border-gray-100 w-full p-8 mt-4">
+
+    <header class="mb-8 flex items-center justify-between">
+      <div>
+        <span class="font-mono text-xs text-gray-400 tracking-wider">{{ editableProject.id }}</span>
+        <h2 class="text-2xl font-bold text-gray-800 mt-1">Modifier le projet</h2>
+        <p class="text-gray-400 text-sm mt-1">Modifiez les informations du projet</p>
+      </div>
+      <span class="px-3 py-1 rounded-full text-xs font-medium border"
+            [ngClass]="{
+              'bg-blue-50 text-blue-700 border-blue-200':       editableProject.status === 'En cours',
+              'bg-green-50 text-green-700 border-green-200':    editableProject.status === 'Terminé',
+              'bg-yellow-50 text-yellow-700 border-yellow-200': editableProject.status === 'En attente'
+            }">
+        {{ editableProject.status }}
+      </span>
+    </header>
+
+    <form #editForm="ngForm" (ngSubmit)="onSubmit(editForm)" novalidate>
+      <div class="grid grid-cols-1 gap-5">
+
+        <!-- Nom -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+            Nom du projet <span class="text-red-400">*</span>
+          </label>
+          <input type="text" name="name" [(ngModel)]="editableProject.name"
+            #name="ngModel" required minlength="4"
+            class="w-full px-4 py-2.5 rounded-xl border text-sm text-gray-700 outline-none transition-all duration-200"
+            [ngClass]="{
+              'border-red-300 bg-red-50': name.invalid && name.touched,
+              'border-gray-200 bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400': !(name.invalid && name.touched)
+            }"/>
+          @if (name.invalid && name.touched) {
+            @if (name.errors?.['required']) {
+              <p class="text-red-400 text-xs mt-1.5">● Le nom est obligatoire.</p>
+            }
+            @if (name.errors?.['minlength']) {
+              <p class="text-red-400 text-xs mt-1.5">● Le nom doit comporter au moins 4 caractères.</p>
+            }
+          }
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+            Description <span class="text-red-400">*</span>
+          </label>
+          <textarea name="description" [(ngModel)]="editableProject.description"
+            #description="ngModel" required rows="3"
+            class="w-full px-4 py-2.5 rounded-xl border text-sm text-gray-700 outline-none transition-all duration-200 resize-none"
+            [ngClass]="{
+              'border-red-300 bg-red-50': description.invalid && description.touched,
+              'border-gray-200 bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400': !(description.invalid && description.touched)
+            }"></textarea>
+          @if (description.invalid && description.touched) {
+            <p class="text-red-400 text-xs mt-1.5">● La description est obligatoire.</p>
+          }
+        </div>
+
+        <!-- Statut + Priorité -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+              Statut <span class="text-red-400">*</span>
+            </label>
+            <select name="status" [(ngModel)]="editableProject.status"
+              #status="ngModel" required
+              class="w-full px-4 py-2.5 rounded-xl border text-sm text-gray-700 outline-none transition-all duration-200 bg-white"
+              [ngClass]="{
+                'border-red-300 bg-red-50': status.invalid && status.touched,
+                'border-gray-200 focus:ring-2 focus:ring-blue-100 focus:border-blue-400': !(status.invalid && status.touched)
+              }">
+              <option value="" disabled>Choisir...</option>
+              <option value="En cours">En cours</option>
+              <option value="En attente">En attente</option>
+              <option value="Terminé">Terminé</option>
+            </select>
+            @if (status.invalid && status.touched) {
+              <p class="text-red-400 text-xs mt-1.5">● Le statut est obligatoire.</p>
+            }
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+              Priorité <span class="text-red-400">*</span>
+            </label>
+            <select name="priority" [(ngModel)]="editableProject.priority"
+              #priority="ngModel" required
+              class="w-full px-4 py-2.5 rounded-xl border text-sm text-gray-700 outline-none transition-all duration-200 bg-white"
+              [ngClass]="{
+                'border-red-300 bg-red-50': priority.invalid && priority.touched,
+                'border-gray-200 focus:ring-2 focus:ring-blue-100 focus:border-blue-400': !(priority.invalid && priority.touched)
+              }">
+              <option value="" disabled>Choisir...</option>
+              <option value="Haute">Haute</option>
+              <option value="Moyenne">Moyenne</option>
+              <option value="Basse">Basse</option>
+            </select>
+            @if (priority.invalid && priority.touched) {
+              <p class="text-red-400 text-xs mt-1.5">● La priorité est obligatoire.</p>
+            }
+          </div>
+        </div>
+
+        <!-- Responsable + Budget -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+              Responsable <span class="text-red-400">*</span>
+            </label>
+            <input type="text" name="owner" [(ngModel)]="editableProject.owner"
+              #owner="ngModel" required placeholder="Ex: Marie Dubois"
+              class="w-full px-4 py-2.5 rounded-xl border text-sm text-gray-700 placeholder-gray-300 outline-none transition-all duration-200"
+              [ngClass]="{
+                'border-red-300 bg-red-50': owner.invalid && owner.touched,
+                'border-gray-200 bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400': !(owner.invalid && owner.touched)
+              }"/>
+            @if (owner.invalid && owner.touched) {
+              <p class="text-red-400 text-xs mt-1.5">● Le responsable est obligatoire.</p>
+            }
+          </div>
+
+        </div>
+
+        <!-- Dates -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+              Date de début <span class="text-red-400">*</span>
+            </label>
+            <input type="date" name="startDate" [(ngModel)]="editableProject.startDate"
+              #startDate="ngModel" required
+              class="w-full px-4 py-2.5 rounded-xl border text-sm text-gray-700 outline-none transition-all duration-200"
+              [ngClass]="{
+                'border-red-300 bg-red-50': startDate.invalid && startDate.touched,
+                'border-gray-200 bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400': !(startDate.invalid && startDate.touched)
+              }"/>
+            @if (startDate.invalid && startDate.touched) {
+              <p class="text-red-400 text-xs mt-1.5">● La date de début est obligatoire.</p>
+            }
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+              Échéance <span class="text-red-400">*</span>
+            </label>
+            <input type="date" name="dueDate" [(ngModel)]="editableProject.dueDate"
+              #dueDate="ngModel" required
+              class="w-full px-4 py-2.5 rounded-xl border text-sm text-gray-700 outline-none transition-all duration-200"
+              [ngClass]="{
+                'border-red-300 bg-red-50': dueDate.invalid && dueDate.touched,
+                'border-gray-200 bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400': !(dueDate.invalid && dueDate.touched)
+              }"/>
+            @if (dueDate.invalid && dueDate.touched) {
+              <p class="text-red-400 text-xs mt-1.5">● L'échéance est obligatoire.</p>
+            }
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Actions -->
+      <div class="border-t border-gray-100 mt-8 pt-6 flex items-center justify-between">
+        <p class="text-xs text-gray-400"><span class="text-red-400">*</span> Champs obligatoires</p>
+        <div class="flex gap-3">
+          <button type="button" (click)="onCancel()"
+            class="px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-500 border border-gray-200 bg-white hover:bg-gray-50 active:scale-95 transition-all duration-200 cursor-pointer">
+            Annuler
+          </button>
+          <button type="submit" [disabled]="editForm.invalid"
+            class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-200"
+            [ngClass]="{
+              'bg-gray-200 text-gray-400 cursor-not-allowed': editForm.invalid,
+              'bg-blue-600 hover:bg-blue-700 active:scale-95 cursor-pointer': editForm.valid
+            }">
+            Sauvegarder
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+}

@@ -1,0 +1,195 @@
+<div class="cf-page">
+  <div class="cf-wrap">
+
+    <aside class="cf-aside">
+      <div>
+        <a [routerLink]="['/projects']" class="cf-back">
+          <span class="cf-back-arrow">←</span> Retour aux projets
+        </a>
+        <h1 class="cf-aside-title">Besoin d'aide ?</h1>
+        <p class="cf-aside-sub">Notre équipe vous répond dans les plus brefs délais.</p>
+        <ul class="cf-steps">
+          <li class="cf-step active"><span class="cf-step-dot"></span>Remplissez le formulaire</li>
+          <li class="cf-step"><span class="cf-step-dot"></span>Nous analysons votre demande</li>
+          <li class="cf-step"><span class="cf-step-dot"></span>Réponse sous 24h</li>
+        </ul>
+      </div>
+      <div class="cf-badge">
+        <span class="cf-badge-dot"></span>Support disponible
+      </div>
+    </aside>
+
+    <main class="cf-main">
+      <div class="cf-header">
+        <p class="cf-header-label">Formulaire de contact</p>
+        <h2 class="cf-header-title">Contactez le support</h2>
+      </div>
+
+      <!-- Partie 1 Q4 : [formGroup] + Partie 1 Q6 : (ngSubmit) -->
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="cf-grid">
+
+          <!-- Nom -->
+          <div class="cf-field">
+            <label class="cf-label">Nom <span class="cf-required">*</span></label>
+            <!-- Partie 1 Q5 : formControlName | Partie 2 Q4 : [class.is-invalid] -->
+            <input class="cf-input" type="text" formControlName="nom"
+                   placeholder="Votre nom"
+                   [class.is-invalid]="nom?.invalid && nom?.touched"
+                   [class.is-valid]="nom?.valid && nom?.touched">
+            <!-- Partie 2 Q2/Q3 : erreurs conditionnelles -->
+            @if (nom?.invalid && nom?.touched) {
+              <div class="cf-errors">
+                @if (nom?.errors?.['required'])  { <span class="cf-error">Le nom est requis.</span> }
+                @if (nom?.errors?.['minlength']) { <span class="cf-error">Minimum 2 caractères.</span> }
+              </div>
+            }
+          </div>
+
+          <!-- Prénom -->
+          <div class="cf-field">
+            <label class="cf-label">Prénom <span class="cf-required">*</span></label>
+            <input class="cf-input" type="text" formControlName="prenom"
+                   placeholder="Votre prénom"
+                   [class.is-invalid]="prenom?.invalid && prenom?.touched"
+                   [class.is-valid]="prenom?.valid && prenom?.touched">
+            @if (prenom?.invalid && prenom?.touched) {
+              <div class="cf-errors">
+                @if (prenom?.errors?.['required'])  { <span class="cf-error">Le prénom est requis.</span> }
+                @if (prenom?.errors?.['minlength']) { <span class="cf-error">Minimum 2 caractères.</span> }
+              </div>
+            }
+          </div>
+
+          <!-- Email + async validator (Partie 2 Q2 : pending spinner) -->
+          <div class="cf-field full">
+            <label class="cf-label">Adresse email <span class="cf-required">*</span></label>
+            <div class="cf-input-row">
+              <input class="cf-input" type="email" formControlName="email"
+                     placeholder="vous@exemple.com"
+                     [class.is-invalid]="email?.invalid && email?.touched && !email?.pending"
+                     [class.is-valid]="email?.valid && email?.touched">
+              @if (email?.pending) { <span class="cf-spinner"></span> }
+            </div>
+            @if (email?.invalid && email?.touched && !email?.pending) {
+              <div class="cf-errors">
+                @if (email?.errors?.['required'])    { <span class="cf-error">L'email est requis.</span> }
+                @if (email?.errors?.['email'])       { <span class="cf-error">Format invalide.</span> }
+                @if (email?.errors?.['emailExists']) { <span class="cf-error">Email déjà utilisé.</span> }
+              </div>
+            }
+          </div>
+
+          <!-- Téléphone tunisien (optionnel) -->
+          <div class="cf-field">
+            <label class="cf-label">
+              Téléphone <span class="cf-optional">(optionnel)</span>
+            </label>
+            <input class="cf-input" type="tel" formControlName="telephone"
+                   placeholder="52345678"
+                   [class.is-invalid]="telephone?.invalid && telephone?.touched"
+                   [class.is-valid]="telephone?.valid && telephone?.value && telephone?.touched">
+            @if (telephone?.invalid && telephone?.touched) {
+              <div class="cf-errors">
+                @if (telephone?.errors?.['pattern']) {
+                  <span class="cf-error">Format invalide (ex : 52345678).</span>
+                }
+              </div>
+            }
+          </div>
+
+
+          <!-- Ville -->
+          <div class="cf-field">
+            <label class="cf-label">Ville <span class="cf-required">*</span></label>
+            <input class="cf-input" type="text" formControlName="ville"
+                   placeholder="Tunis"
+                   [class.is-invalid]="ville?.invalid && ville?.touched"
+                   [class.is-valid]="ville?.valid && ville?.touched">
+            @if (ville?.invalid && ville?.touched) {
+              <div class="cf-errors">
+                @if (ville?.errors?.['required']) { <span class="cf-error">La ville est requise.</span> }
+              </div>
+            }
+          </div>
+
+          <!-- Message -->
+          <div class="cf-field full">
+            <label class="cf-label">Message <span class="cf-required">*</span></label>
+            <textarea class="cf-input cf-textarea" formControlName="message"
+                      placeholder="Décrivez votre problème..." rows="4"
+                      [class.is-invalid]="message?.invalid && message?.touched"
+                      [class.is-valid]="message?.valid && message?.touched"></textarea>
+            <div class="cf-field-footer">
+              @if (message?.invalid && message?.touched) {
+                <div class="cf-errors">
+                  @if (message?.errors?.['required'])  { <span class="cf-error">Le message est requis.</span> }
+                  @if (message?.errors?.['minlength']) { <span class="cf-error">Minimum 10 caractères.</span> }
+                </div>
+              }
+              <span class="cf-char-count"
+                    [class.cf-char-ok]="(message?.value?.length ?? 0) >= 10">
+                {{ message?.value?.length ?? 0 }} / 10 min
+              </span>
+            </div>
+          </div>
+
+          <!-- Mot de passe (Partie 2 Q1 : passwordStrengthValidator) -->
+          <div class="cf-field">
+            <label class="cf-label">Mot de passe <span class="cf-required">*</span></label>
+            <input class="cf-input" type="password" formControlName="password"
+                   placeholder="••••••••"
+                   [class.is-invalid]="password?.invalid && password?.touched"
+                   [class.is-valid]="password?.valid && password?.touched">
+            @if (password?.invalid && password?.touched) {
+              <div class="cf-errors">
+                @if (password?.errors?.['required']) { <span class="cf-error">Le mot de passe est requis.</span> }
+                @if (password?.errors?.['passwordStrength']) {
+                  @if (pwdErrors['tooShort'])    { <span class="cf-error">Minimum 8 caractères.</span> }
+                  @if (pwdErrors['noUppercase']) { <span class="cf-error">Au moins une majuscule.</span> }
+                  @if (pwdErrors['noLowercase']) { <span class="cf-error">Au moins une minuscule.</span> }
+                  @if (pwdErrors['noNumber'])    { <span class="cf-error">Au moins un chiffre.</span> }
+                  @if (pwdErrors['noSpecial'])   { <span class="cf-error">Au moins un caractère spécial.</span> }
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Confirmer mot de passe (Partie 2 Q1 : matchPasswordValidator) -->
+          <div class="cf-field">
+            <label class="cf-label">Confirmer le mot de passe <span class="cf-required">*</span></label>
+            <input class="cf-input" type="password" formControlName="confirmPassword"
+                   placeholder="••••••••"
+                   [class.is-invalid]="confirmPassword?.touched && form.errors?.['mustMatch']"
+                   [class.is-valid]="confirmPassword?.touched && !form.errors?.['mustMatch'] && confirmPassword?.valid">
+            @if (confirmPassword?.touched && form.errors?.['mustMatch']) {
+              <div class="cf-errors">
+                <span class="cf-error">Les mots de passe ne correspondent pas.</span>
+              </div>
+            }
+          </div>
+
+        </div>
+
+        <!-- Partie 1 Q7 : afficher valeur JSON -->
+        <details class="cf-debug">
+          <summary>Voir les valeurs (JSON)</summary>
+          <pre>{{ form.value | json }}</pre>
+        </details>
+
+        <div class="cf-divider"></div>
+
+        <div class="cf-actions">
+          <button type="button" class="cf-reset" (click)="resetForm()">Réinitialiser</button>
+          <!-- Partie 1 Q6 : [disabled] si invalide ou pending -->
+          <button type="submit" class="cf-submit"
+                  [disabled]="form.invalid || form.pending || isSubmitting">
+            Envoyer le message
+            <span class="cf-submit-arrow">→</span>
+          </button>
+        </div>
+      </form>
+    </main>
+
+  </div>
+</div>

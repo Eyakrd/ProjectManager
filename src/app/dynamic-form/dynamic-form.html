@@ -1,0 +1,500 @@
+<div class="df-page">
+
+  <!-- Back -->
+  <a [routerLink]="['/projects']" class="df-back">
+    <!-- Lucide: arrow-left -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>
+    </svg>
+    Retour aux projets
+  </a>
+
+  <!-- Toast -->
+  @if (toast) {
+    <div class="df-toast">{{ toast }}</div>
+  }
+
+  <!-- Page title -->
+  <div class="df-page-header">
+    <h1 class="df-page-title">Formulaires dynamiques</h1>
+    <p class="df-page-sub">Gérez vos données avec des formulaires réactifs Angular</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="df-tabs">
+    <button class="df-tab" [class.active]="activeTab === 'emails'"      (click)="setTab('emails')">Emails dynamiques</button>
+    <button class="df-tab" [class.active]="activeTab === 'competences'" (click)="setTab('competences')">Compétences</button>
+    <button class="df-tab" [class.active]="activeTab === 'adresse'"     (click)="setTab('adresse')">Adresse imbriquée</button>
+    <button class="df-tab" [class.active]="activeTab === 'adresses'"    (click)="setTab('adresses')">Adresses multiples</button>
+  </div>
+
+  <!-- ── Tab: Emails ── -->
+  @if (activeTab === 'emails') {
+    <div class="df-card">
+      <div class="df-card-header">
+        <div class="df-card-icon">
+          <!-- Lucide: mail -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="16" x="2" y="4" rx="2"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="df-card-title">Emails dynamiques</h2>
+          <p class="df-card-sub">Ajoutez plusieurs adresses email avec leur type</p>
+        </div>
+      </div>
+
+      <form [formGroup]="emailForm" (ngSubmit)="onSubmitEmails()">
+        <div class="df-field">
+          <label class="df-label">Nom <span class="df-req">*</span></label>
+          <input type="text" formControlName="nom"
+                 [class.is-invalid]="emailForm.get('nom')?.invalid && emailForm.get('nom')?.touched"
+                 [class.is-valid]="emailForm.get('nom')?.valid && emailForm.get('nom')?.touched" />
+          @if (emailForm.get('nom')?.invalid && emailForm.get('nom')?.touched) {
+            <span class="df-error">Le nom est requis.</span>
+          }
+        </div>
+
+        <div class="df-section-label">Adresses email</div>
+
+        <div formArrayName="emails">
+          @for (emailGroup of emails.controls; track emailGroup; let i = $index) {
+            <div [formGroupName]="i" class="df-array-row">
+              <div class="df-field df-flex-1">
+                <label class="df-label">Email {{ i + 1 }}</label>
+                <input type="email" formControlName="email"
+                       [class.is-invalid]="emailGroup.get('email')?.invalid && emailGroup.get('email')?.touched"
+                       [class.is-valid]="emailGroup.get('email')?.valid && emailGroup.get('email')?.touched" />
+                @if (emailGroup.get('email')?.invalid && emailGroup.get('email')?.touched) {
+                  <span class="df-error">
+                    @if (emailGroup.get('email')?.errors?.['required']) { Email requis. }
+                    @if (emailGroup.get('email')?.errors?.['email'])    { Format invalide. }
+                  </span>
+                }
+              </div>
+              <div class="df-field df-w-40">
+                <label class="df-label">Type</label>
+                <select formControlName="type">
+                  <option value="personnel">Personnel</option>
+                  <option value="professionnel">Professionnel</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+              <button type="button" class="df-btn-remove" (click)="removeEmail(i)" [disabled]="emails.length === 1">
+                <!-- Lucide: x -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2.5"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+                </svg>
+              </button>
+            </div>
+          }
+        </div>
+
+        <button type="button" class="df-btn-add" (click)="addEmail()">
+          <!-- Lucide: plus -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px">
+            <path d="M12 5v14"/><path d="M5 12h14"/>
+          </svg>
+          Ajouter un email
+        </button>
+
+        <div class="df-actions">
+          <button type="button" class="df-btn-secondary" (click)="resetEmailForm()">Réinitialiser</button>
+          <button type="submit" class="df-btn-primary" [disabled]="emailForm.invalid">
+            Enregistrer
+            <!-- Lucide: arrow-right -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" class="df-btn-arrow">
+              <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <details class="df-debug"><summary>JSON</summary><pre>{{ emailForm.value | json }}</pre></details>
+    </div>
+  }
+
+  <!-- ── Tab: Compétences ── -->
+  @if (activeTab === 'competences') {
+    <div class="df-card">
+      <div class="df-card-header">
+        <div class="df-card-icon">
+          <!-- Lucide: star -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="df-card-title">Compétences</h2>
+          <p class="df-card-sub">Minimum 3 compétences requises (si au moins une est ajoutée)</p>
+        </div>
+      </div>
+
+      <form [formGroup]="competenceForm" (ngSubmit)="onSubmitCompetences()">
+        <div class="df-section-label">Liste des compétences</div>
+
+        <div formArrayName="competences">
+          @for (comp of competences.controls; track comp; let i = $index) {
+            <div [formGroupName]="i" class="df-array-row">
+              <div class="df-field df-flex-1">
+                <label class="df-label">Compétence {{ i + 1 }}</label>
+                <input type="text" formControlName="nom" placeholder="Ex: Angular"
+                       [class.is-invalid]="comp.get('nom')?.invalid && comp.get('nom')?.touched"
+                       [class.is-valid]="comp.get('nom')?.valid && comp.get('nom')?.touched" />
+                @if (comp.get('nom')?.invalid && comp.get('nom')?.touched) {
+                  <span class="df-error">Nom requis.</span>
+                }
+              </div>
+              <div class="df-field df-w-24">
+                <label class="df-label">Niveau (1-5)</label>
+                <input type="number" formControlName="niveau" placeholder="1-5" min="1" max="5" step="1"
+                       (keypress)="onlyDigits($event)"
+                       (input)="clampNiveau($event, i)"
+                       [class.is-invalid]="comp.get('niveau')?.invalid && comp.get('niveau')?.touched"
+                       [class.is-valid]="comp.get('niveau')?.valid && comp.get('niveau')?.touched" />
+                @if (comp.get('niveau')?.invalid && comp.get('niveau')?.touched) {
+                  <span class="df-error">
+                    @if (comp.get('niveau')?.errors?.['required']) { Requis. }
+                    @if (comp.get('niveau')?.errors?.['min'])      { Min 1. }
+                    @if (comp.get('niveau')?.errors?.['max'])      { Max 5. }
+                  </span>
+                }
+              </div>
+              <button type="button" class="df-btn-remove" (click)="removeCompetence(i)" [disabled]="competences.length === 1">
+                <!-- Lucide: x -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2.5"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+                </svg>
+              </button>
+            </div>
+          }
+        </div>
+
+        @if (competenceForm.get('competences')?.errors?.['minCompetences']) {
+          <div class="df-warn">
+            <!-- Lucide: alert-triangle -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+              <path d="M12 9v4"/><path d="M12 17h.01"/>
+            </svg>
+            Veuillez ajouter au moins 3 compétences
+            ({{ competenceForm.get('competences')?.errors?.['minCompetences'].actual }} / 3).
+          </div>
+        }
+
+        <button type="button" class="df-btn-add" (click)="addCompetence()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px">
+            <path d="M12 5v14"/><path d="M5 12h14"/>
+          </svg>
+          Ajouter une compétence
+        </button>
+
+        <div class="df-actions">
+          <button type="button" class="df-btn-secondary" (click)="competenceForm.reset()">Réinitialiser</button>
+          <button type="submit" class="df-btn-primary" [disabled]="competenceForm.invalid">
+            Enregistrer
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" class="df-btn-arrow">
+              <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <details class="df-debug"><summary>JSON</summary><pre>{{ competenceForm.value | json }}</pre></details>
+    </div>
+  }
+
+  <!-- ── Tab: Adresse imbriquée ── -->
+  @if (activeTab === 'adresse') {
+    <div class="df-card">
+      <div class="df-card-header">
+        <div class="df-card-icon">
+          <!-- Lucide: home -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="df-card-title">Utilisateur avec adresse imbriquée</h2>
+          <p class="df-card-sub">FormGroup imbriqué pour les informations d'adresse</p>
+        </div>
+      </div>
+
+      <form [formGroup]="userWithAddressForm" (ngSubmit)="onSubmitUserWithAddress()">
+
+        <div class="df-section-label">Informations personnelles</div>
+        <div class="df-grid-2">
+          <div class="df-field">
+            <label class="df-label">Nom <span class="df-req">*</span></label>
+            <input type="text" formControlName="nom"
+                   [class.is-invalid]="validationService.isInvalid(userWithAddressForm.get('nom'))"
+                   [class.is-valid]="validationService.isValid(userWithAddressForm.get('nom'))" />
+            @if (validationService.isInvalid(userWithAddressForm.get('nom'))) {
+              <span class="df-error">{{ validationService.getErrorMessage(userWithAddressForm.get('nom')) }}</span>
+            }
+          </div>
+          <div class="df-field">
+            <label class="df-label">Prénom <span class="df-req">*</span></label>
+            <input type="text" formControlName="prenom"
+                   [class.is-invalid]="validationService.isInvalid(userWithAddressForm.get('prenom'))"
+                   [class.is-valid]="validationService.isValid(userWithAddressForm.get('prenom'))" />
+            @if (validationService.isInvalid(userWithAddressForm.get('prenom'))) {
+              <span class="df-error">{{ validationService.getErrorMessage(userWithAddressForm.get('prenom')) }}</span>
+            }
+          </div>
+        </div>
+
+        <div class="df-field">
+          <label class="df-label">Email <span class="df-req">*</span></label>
+          <input type="email" formControlName="email"
+                 [class.is-invalid]="validationService.isInvalid(userWithAddressForm.get('email'))"
+                 [class.is-valid]="validationService.isValid(userWithAddressForm.get('email'))" />
+          @if (validationService.isInvalid(userWithAddressForm.get('email'))) {
+            <span class="df-error">{{ validationService.getErrorMessage(userWithAddressForm.get('email')) }}</span>
+          }
+        </div>
+
+        <div class="df-section-label" style="margin-top:1.25rem">Adresse</div>
+        <div class="df-fieldset" formGroupName="adresse">
+          <div class="df-field">
+            <label class="df-label">Rue <span class="df-req">*</span></label>
+            <input type="text" formControlName="rue"
+                   [class.is-invalid]="validationService.isInvalid(adresse.get('rue'))"
+                   [class.is-valid]="validationService.isValid(adresse.get('rue'))" />
+            @if (validationService.isInvalid(adresse.get('rue'))) {
+              <span class="df-error">{{ validationService.getErrorMessage(adresse.get('rue')) }}</span>
+            }
+          </div>
+          <div class="df-grid-2">
+            <div class="df-field">
+              <label class="df-label">Code Postal <span class="df-req">*</span></label>
+              <input type="text" formControlName="codePostal" placeholder="4 chiffres"
+                     maxlength="4" inputmode="numeric"
+                     (keypress)="onlyDigits($event)"
+                     [class.is-invalid]="validationService.isInvalid(adresse.get('codePostal'))"
+                     [class.is-valid]="validationService.isValid(adresse.get('codePostal'))" />
+              @if (validationService.isInvalid(adresse.get('codePostal'))) {
+                <span class="df-error">{{ validationService.getErrorMessage(adresse.get('codePostal')) }}</span>
+              }
+            </div>
+            <div class="df-field">
+              <label class="df-label">Ville <span class="df-req">*</span></label>
+              <input type="text" formControlName="ville"
+                     [class.is-invalid]="validationService.isInvalid(adresse.get('ville'))"
+                     [class.is-valid]="validationService.isValid(adresse.get('ville'))" />
+              @if (validationService.isInvalid(adresse.get('ville'))) {
+                <span class="df-error">{{ validationService.getErrorMessage(adresse.get('ville')) }}</span>
+              }
+            </div>
+          </div>
+          <div class="df-field">
+            <label class="df-label">Pays <span class="df-req">*</span></label>
+            <input type="text" formControlName="pays"
+                   [class.is-invalid]="validationService.isInvalid(adresse.get('pays'))"
+                   [class.is-valid]="validationService.isValid(adresse.get('pays'))" />
+            @if (validationService.isInvalid(adresse.get('pays'))) {
+              <span class="df-error">{{ validationService.getErrorMessage(adresse.get('pays')) }}</span>
+            }
+          </div>
+        </div>
+
+        <div class="df-actions">
+          <button type="button" class="df-btn-secondary" (click)="resetUserWithAddressForm()">Réinitialiser</button>
+          <button type="submit" class="df-btn-primary" [disabled]="userWithAddressForm.invalid">
+            Enregistrer
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" class="df-btn-arrow">
+              <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <details class="df-debug"><summary>JSON</summary><pre>{{ userWithAddressForm.value | json }}</pre></details>
+    </div>
+  }
+
+  <!-- ── Tab: Adresses multiples ── -->
+  @if (activeTab === 'adresses') {
+    <div class="df-card">
+      <div class="df-card-header">
+        <div class="df-card-icon">
+          <!-- Lucide: layout-grid -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round">
+            <rect width="7" height="7" x="3" y="3" rx="1"/>
+            <rect width="7" height="7" x="14" y="3" rx="1"/>
+            <rect width="7" height="7" x="3" y="14" rx="1"/>
+            <rect width="7" height="7" x="14" y="14" rx="1"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="df-card-title">Utilisateur avec adresses multiples</h2>
+          <p class="df-card-sub">FormArray combiné avec FormGroup pour plusieurs adresses</p>
+        </div>
+      </div>
+
+      <form [formGroup]="multiAddressForm" (ngSubmit)="onSubmitMultiAddress()">
+
+        <div class="df-section-label">Informations personnelles</div>
+        <div class="df-grid-2">
+          <div class="df-field">
+            <label class="df-label">Nom <span class="df-req">*</span></label>
+            <input type="text" formControlName="nom"
+                   [class.is-invalid]="validationService.isInvalid(multiAddressForm.get('nom'))"
+                   [class.is-valid]="validationService.isValid(multiAddressForm.get('nom'))" />
+            @if (validationService.isInvalid(multiAddressForm.get('nom'))) {
+              <span class="df-error">{{ validationService.getErrorMessage(multiAddressForm.get('nom')) }}</span>
+            }
+          </div>
+          <div class="df-field">
+            <label class="df-label">Prénom <span class="df-req">*</span></label>
+            <input type="text" formControlName="prenom"
+                   [class.is-invalid]="validationService.isInvalid(multiAddressForm.get('prenom'))"
+                   [class.is-valid]="validationService.isValid(multiAddressForm.get('prenom'))" />
+            @if (validationService.isInvalid(multiAddressForm.get('prenom'))) {
+              <span class="df-error">{{ validationService.getErrorMessage(multiAddressForm.get('prenom')) }}</span>
+            }
+          </div>
+        </div>
+
+        <div class="df-section-label" style="margin-top:1.25rem">Adresses</div>
+
+        <div formArrayName="adresses">
+          @for (addressGroup of adresses.controls; track addressGroup; let i = $index) {
+            <div [formGroupName]="i" class="df-address-block">
+              <div class="df-address-block-header">
+                <span class="df-address-badge">
+                  <!-- Lucide: map-pin -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24"
+                       fill="none" stroke="currentColor" stroke-width="2"
+                       stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:3px">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  Adresse {{ i + 1 }}
+                </span>
+                <button type="button" class="df-btn-remove-inline"
+                        (click)="removeAddress(i)" [disabled]="adresses.length === 1">
+                  <!-- Lucide: trash-2 -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24"
+                       fill="none" stroke="currentColor" stroke-width="2"
+                       stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:3px">
+                    <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                    <line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
+                  </svg>
+                  Supprimer
+                </button>
+              </div>
+
+              <div class="df-field">
+                <label class="df-label">Type d'adresse</label>
+                <select formControlName="type">
+                  <option value="domicile">Domicile</option>
+                  <option value="travail">Travail</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+
+              <div class="df-field">
+                <label class="df-label">Rue <span class="df-req">*</span></label>
+                <input type="text" formControlName="rue"
+                       [class.is-invalid]="validationService.isInvalid(addressGroup.get('rue'))"
+                       [class.is-valid]="validationService.isValid(addressGroup.get('rue'))" />
+                @if (validationService.isInvalid(addressGroup.get('rue'))) {
+                  <span class="df-error">{{ validationService.getErrorMessage(addressGroup.get('rue')) }}</span>
+                }
+              </div>
+
+              <div class="df-grid-2">
+                <div class="df-field">
+                  <label class="df-label">Code Postal <span class="df-req">*</span></label>
+                  <input type="text" formControlName="codePostal" placeholder="4 chiffres"
+                         maxlength="4" inputmode="numeric"
+                         (keypress)="onlyDigits($event)"
+                         [class.is-invalid]="validationService.isInvalid(addressGroup.get('codePostal'))"
+                         [class.is-valid]="validationService.isValid(addressGroup.get('codePostal'))" />
+                  @if (validationService.isInvalid(addressGroup.get('codePostal'))) {
+                    <span class="df-error">{{ validationService.getErrorMessage(addressGroup.get('codePostal')) }}</span>
+                  }
+                </div>
+                <div class="df-field">
+                  <label class="df-label">Ville <span class="df-req">*</span></label>
+                  <input type="text" formControlName="ville"
+                         [class.is-invalid]="validationService.isInvalid(addressGroup.get('ville'))"
+                         [class.is-valid]="validationService.isValid(addressGroup.get('ville'))" />
+                  @if (validationService.isInvalid(addressGroup.get('ville'))) {
+                    <span class="df-error">{{ validationService.getErrorMessage(addressGroup.get('ville')) }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (multiAddressForm.get('adresses')?.errors?.['minAddresses']) {
+          <div class="df-warn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+              <path d="M12 9v4"/><path d="M12 17h.01"/>
+            </svg>
+            Au moins une adresse est requise.
+          </div>
+        }
+
+        <button type="button" class="df-btn-add" (click)="addAddress()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px">
+            <path d="M12 5v14"/><path d="M5 12h14"/>
+          </svg>
+          Ajouter une adresse
+        </button>
+
+        <div class="df-actions">
+          <button type="button" class="df-btn-secondary" (click)="resetMultiAddressForm()">Réinitialiser</button>
+          <button type="submit" class="df-btn-primary" [disabled]="multiAddressForm.invalid">
+            Enregistrer
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" class="df-btn-arrow">
+              <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <details class="df-debug"><summary>JSON</summary><pre>{{ multiAddressForm.value | json }}</pre></details>
+    </div>
+  }
+
+</div>
